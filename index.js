@@ -1,0 +1,1 @@
+﻿module.exports = require("./lib/browsers-binaries-standalone/index");
