@@ -1,5 +1,5 @@
 ﻿import {_, Path, Url, Promise} from "./externals";
-import {Platform, Chromium, Firefox} from "./Browsers/Browsers";
+import {Platform, Chromium, Firefox, BrowserBase} from "./Browsers/Browsers";
 export {Chromium, Firefox, Platform};
 
 export function create(configOrPath: IInstallConfig | string, configOrPathEx?: IInstallConfig | string) {
@@ -19,16 +19,17 @@ export function create(configOrPath: IInstallConfig | string, configOrPathEx?: I
         });
     }
 
-    if(!config.browsers) {
-        throw new Error("Config.browsers must be specified!");
-    }
+    let createFns = {
+        chromium: (cfg: IInstallBrowsersConfig) =>
+            new Chromium(Platform[cfg.platform], cfg.version, config.defaultPath || cfg.path),
+        firefox: (cfg: IInstallBrowsersConfig) =>
+            new Firefox(Platform[cfg.platform], cfg.version, cfg.language, config.defaultPath || cfg.path)
+    };
 
-    let browsers = config.browsers.map(cfg => {
-        switch(cfg.name.toLowerCase()) {
-            case "chromium": return new Chromium(Platform[cfg.platform], cfg.version);
-            case "firefox": return new Firefox(Platform[cfg.platform], cfg.version, cfg.language);
-        }
-    });
+    let browsers = _.flatten(_.keys(config).filter(key => config[key] && createFns[key]).map(key => {
+        let installConfigs: IInstallBrowsersConfig[] = _.isArray(config[key]) ? config[key] : [config[key]];
+        return installConfigs.map(cfg => <BrowserBase>createFns[key](cfg));
+    }));
 
     return browsers;
 }
@@ -38,12 +39,14 @@ export function install(configOrPath: IInstallConfig | string, configOrPathEx?: 
 }
 
 export interface IInstallConfig {
-    browsers: IInstallBrowsersConfig[];
+    firefox: IInstallBrowsersConfig | IInstallBrowsersConfig[];
+    chromium: IInstallBrowsersConfig | IInstallBrowsersConfig[];
+    defaultPath: string;
 }
 
 export interface IInstallBrowsersConfig {
-    name: string;
     version: string;
     platform: string;
     language?: string;
+    path?: string;
 }

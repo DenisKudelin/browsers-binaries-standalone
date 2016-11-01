@@ -3,8 +3,8 @@ import {Helpers} from "../exports"
 import {BrowserBase, Platform} from "./Browsers";
 
 export class Chromium extends BrowserBase {
-    constructor(platform: Platform, version: string) {
-        super("Chromium", platform, version);
+    constructor(platform: Platform, version: string, path?: string) {
+        super("Chromium", platform, version, path);
     }
 
     public static getVersionInformation(version: string) {

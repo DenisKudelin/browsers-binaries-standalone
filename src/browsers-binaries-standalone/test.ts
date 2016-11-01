@@ -3,18 +3,15 @@ import {Platform, Chromium, Firefox} from "./Browsers/Browsers";
 export {Chromium, Firefox, Platform};
 
 /*install({
-    browsers: [{
-        name: "chromium",
+    firefox: {
+        version: "47.0.1",
+        platform: "Win_x64",
+        language: "en-US" // default;
+    },
+    chromium: {
         version: "54.0.2840.71",
         platform: "Win_x64"
-    }]
-}, {
-    browsers: [{
-        name: "firefox",
-        version: "49.0",
-        platform: "Win_x64",
-       language: "en-US" // default;
-    }]
+    }
 });*/
 
 

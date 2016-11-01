@@ -1,17 +1,19 @@
 ﻿import {_, FS, Path, RequestPromise, Url, Chalk, Mkdirp, Rimraf, SevenZip, Promise, Globule} from "../externals";
-import {Helpers} from "../exports"
+import {Helpers, ProgressLog} from "../exports"
 import {Platform} from "./Browsers";
 
 export abstract class BrowserBase {
     public version: string;
     public platform: Platform;
-
+    protected versionSuffix: string;
     private name: string;
+    private path: string;
 
-    constructor(name: string, platform: Platform, version: string) {
+    constructor(name: string, platform: Platform, version: string, path?: string) {
         this.name = name;
         this.version = version;
         this.platform = platform;
+        this.path = path || Path.join(__dirname, "../../../browsers/");
         if(!platform) {
             throw new Error("Browser platform must be specified!");
         }
@@ -25,8 +27,8 @@ export abstract class BrowserBase {
     public abstract install(): Promise<void>;
 
     public getBinariesPath(path = "") {
-        return Path.join(__dirname, "../../../browsers/" + this.name.toLowerCase(),
-            this.version.toLowerCase() + "-" + Platform[this.platform].toLowerCase(), path);
+        let versionName = `${this.version.toLowerCase()}_${Platform[this.platform].toLowerCase()}${(this.versionSuffix || "")}`;
+        return Path.join(this.path, this.name.toLowerCase(), versionName , path);
     }
 
     public isDownloaded() {
@@ -57,32 +59,33 @@ export abstract class BrowserBase {
 
     protected downloadFile(url: string, unpack: (path: string) => Promise<any>) {
         let path = this.getBinariesPath(this.getFullName(true));
-        if(FS.existsSync(path)) {
+        /*if(FS.existsSync(path)) {
             return unpack(path);
-        }
+        }*/
 
         return Promise.resolve()
             .then(() => Rimraf.sync(Path.dirname(path))).delay(10)
             .then(() => Mkdirp.sync(Path.dirname(path)))
             .then(() => {
                 let options: RequestPromise.Options = {
-                    uri: url
+                    uri: url,
+                    timeout: 10000
                 };
 
                 let request = RequestPromise(options);
 
                 let fileStream = FS.createWriteStream(path, {'flags': 'a'});
-                let totalBytes;
-                let downloadedBytes = 0;
+                let progress = new ProgressLog();
                 request.pipe(fileStream);
 
                 request.on("response", data => {
-                    totalBytes = parseInt(data.headers["content-length"]);
+                    let totalBytes = parseInt(data.headers["content-length"]);
                     this.log(`Downloading ${this.getFullName()} (${Helpers.autoFormatSize(totalBytes)})..`);
+                    progress.init(totalBytes);
                 });
 
                 request.on("data", (chunk) => {
-                    downloadedBytes += chunk.length;
+                    progress.progress(chunk.length);
                 });
 
                 request.on("end", () => {

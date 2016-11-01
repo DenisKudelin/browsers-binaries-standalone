@@ -1,7 +1,7 @@
 import { Promise } from "../externals";
 import { BrowserBase, Platform } from "./Browsers";
 export declare class Chromium extends BrowserBase {
-    constructor(platform: Platform, version: string);
+    constructor(platform: Platform, version: string, path?: string);
     static getVersionInformation(version: string): Promise<IVersionInformation>;
     private getBinariesPlatformPath();
     private getBinariesPositions(bucket);

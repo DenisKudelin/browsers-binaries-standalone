@@ -3,8 +3,10 @@ import { Platform } from "./Browsers";
 export declare abstract class BrowserBase {
     version: string;
     platform: Platform;
+    protected versionSuffix: string;
     private name;
-    constructor(name: string, platform: Platform, version: string);
+    private path;
+    constructor(name: string, platform: Platform, version: string, path?: string);
     abstract getExecutablePath(): string;
     abstract install(): Promise<void>;
     getBinariesPath(path?: string): string;

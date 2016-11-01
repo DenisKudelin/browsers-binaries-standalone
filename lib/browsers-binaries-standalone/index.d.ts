@@ -1,14 +1,16 @@
 import { Promise } from "./externals";
-import { Platform, Chromium, Firefox } from "./Browsers/Browsers";
+import { Platform, Chromium, Firefox, BrowserBase } from "./Browsers/Browsers";
 export { Chromium, Firefox, Platform };
-export declare function create(configOrPath: IInstallConfig | string, configOrPathEx?: IInstallConfig | string): (Chromium | Firefox)[];
-export declare function install(configOrPath: IInstallConfig | string, configOrPathEx?: IInstallConfig | string): Promise<(Chromium | Firefox)[]>;
+export declare function create(configOrPath: IInstallConfig | string, configOrPathEx?: IInstallConfig | string): BrowserBase[];
+export declare function install(configOrPath: IInstallConfig | string, configOrPathEx?: IInstallConfig | string): Promise<BrowserBase[]>;
 export interface IInstallConfig {
-    browsers: IInstallBrowsersConfig[];
+    firefox: IInstallBrowsersConfig | IInstallBrowsersConfig[];
+    chromium: IInstallBrowsersConfig | IInstallBrowsersConfig[];
+    defaultPath: string;
 }
 export interface IInstallBrowsersConfig {
-    name: string;
     version: string;
     platform: string;
     language?: string;
+    path?: string;
 }

@@ -5,9 +5,10 @@ import {BrowserBase, Platform} from "./Browsers";
 export class Firefox extends BrowserBase {
 
     private language;
-    constructor(platform: Platform, version: string, language: string = "en-US") {
-        super("Firefox", platform, version);
-        this.language = language;
+    constructor(platform: Platform, version: string, language?: string, path?: string) {
+        super("Firefox", platform, version, path);
+        this.language = language || "en-US";
+        this.versionSuffix = "_" + this.language; 
     }
 
     private getBinariesUrl() {

@@ -1,6 +1,6 @@
 {
   "name": "browsers-binaries-standalone",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": "Denis Kudelin", 
   "repository": {
@@ -19,7 +19,7 @@
     "request-promise": "4.1.1",
     "chalk": "1.1.3",
     "globule": "1.1.0",
-    "7zip-standalone": "0.0.1",
+    "7zip-standalone": "0.0.2",
     "tsconfig-extended-typescript-builder": "0.0.2"
   },
   "engines": {
